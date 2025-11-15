@@ -2,10 +2,19 @@ import os
 import requests
 from typing import Dict, Optional
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# Try to load .env file from multiple possible locations
+# 1. Project root (for Docker: /app/../.env, for local: ./fastApiServer/../.env)
+project_root = Path(__file__).parent.parent.parent
+env_path = project_root / '.env'
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path, override=False)
 
-# FREEPIK_API_KEY = os.getenv("FREEPIK_API_KEY", "")
+# 2. Current directory (for local development)
+load_dotenv(override=False)
+
+FREEPIK_API_KEY = os.getenv("FREEPIK_API_KEY")
 FREEPIK_API_URL = "https://api.freepik.com/v1/ai/text-to-image"
 
 

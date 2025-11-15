@@ -184,14 +184,6 @@ function App() {
             <div className="dialogue-text">
               {gameState.narrative}
             </div>
-            <div className="dialogue-menu">
-              <span>History</span>
-              <span>Skip</span>
-              <span>Auto</span>
-              <span>Save</span>
-              <span>Load</span>
-              <span>Settings</span>
-            </div>
           </div>
         </div>
 

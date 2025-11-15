@@ -14,7 +14,18 @@ A full-stack application with FastAPI backend and React frontend, fully dockeriz
    git clone https://github.com/your-org/project-template.git
    cd project-template
    ```
-2. (Optional) Copy any `.env.example` files to `.env` if you decide to customize environment variables. The repository ships with sensible defaults baked into `docker-compose.yml`, so you can skip this step for local experimentation.
+
+2. **Set up environment variables** (Required):
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env and add your API keys:
+   # - OPENAI_API_KEY: Your OpenAI API key for GPT model
+   # - FREEPIK_API_KEY: Your Freepik API key for image generation
+   ```
+   
+   **Important**: The `.env` file is already in `.gitignore` and will NOT be committed to git. Never commit your actual API keys to the repository.
 
 ## Getting Started
 

@@ -3,10 +3,36 @@ import json
 from typing import Dict, List, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# Try to load .env file from multiple possible locations
+# Docker Compose sets env_file, but we also try to load .env for local development
 
-# client = OpenAI(api_key="")
+# 1. Try loading from project root (for local development: ./fastApiServer/../.env)
+try:
+    project_root = Path(__file__).parent.parent.parent
+    env_path = project_root / '.env'
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path, override=False)
+except Exception:
+    pass
+
+# 2. Try loading from current directory
+try:
+    load_dotenv(override=False)
+except Exception:
+    pass
+
+# Get API key from environment (set by docker-compose env_file or .env)
+# Docker Compose's env_file should set this automatically
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError(
+        "OPENAI_API_KEY environment variable is not set. "
+        "Please ensure your .env file exists in the project root and docker-compose.yml has 'env_file: - .env' configured."
+    )
+
+client = OpenAI(api_key=api_key)
 model = "gpt-5-nano"
 
 # Default characters for the game

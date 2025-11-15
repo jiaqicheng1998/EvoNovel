@@ -1,18 +1,21 @@
-version: '3.8'
-
 services:
   fastapi:
     build:
       context: ./fastApiServer
       dockerfile: Dockerfile
+    
     container_name: fastapi-server
     ports:
       - "8000:8000"
     volumes:
       - ./fastApiServer:/app
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - FREEPIK_API_KEY=${FREEPIK_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - app-network
     depends_on:
