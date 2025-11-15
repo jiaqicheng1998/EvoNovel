@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build:
+      context: ./fastApiServer
+      dockerfile: Dockerfile
+    container_name: fastapi-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastApiServer:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  react:
+    build:
+      context: ./reactClient
+      dockerfile: Dockerfile
+    container_name: react-client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./reactClient:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+

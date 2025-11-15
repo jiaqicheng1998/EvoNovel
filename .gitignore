@@ -1,0 +1,49 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyi
+*.pyz
+.Python
+*.egg-info/
+*.egg
+build/
+dist/
+pip-wheel-metadata/
+venv/
+.venv/
+
+# FastAPI / uvicorn
+*.log
+
+# Node / React
+node_modules/
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker
+*.pid
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Misc
+logs/
+tmp/
+
+
