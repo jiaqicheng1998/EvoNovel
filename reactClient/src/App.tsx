@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { startGame, continueGame, generateArt, generateImage } from './api';
 import type { StartGameResponse, ContinueGameResponse, GenerateArtResponse, Choice } from './types';
 import './App.css';
@@ -12,6 +12,34 @@ function App() {
   const [imageError, setImageError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio('/music.mp3');
+    audio.loop = true;
+    audio.volume = 0.4;
+    
+    const playAudio = async () => {
+      try {
+        await audio.play();
+      } catch (err) {
+        console.log("Autoplay prevented, waiting for interaction:", err);
+        const handleInteraction = () => {
+          audio.play();
+          document.removeEventListener('click', handleInteraction);
+          document.removeEventListener('keydown', handleInteraction);
+        };
+        document.addEventListener('click', handleInteraction);
+        document.addEventListener('keydown', handleInteraction);
+      }
+    };
+
+    playAudio();
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
 
   const handleStartGame = async () => {
     setLoading(true);
