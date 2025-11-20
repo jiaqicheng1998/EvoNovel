@@ -281,10 +281,6 @@ If PostgreSQL connection fails:
 - Check logs: `docker-compose logs postgres`
 - Restart: `docker-compose restart postgres`
 
-## 📝 License
-
-[Add your license here]
-
 ## 🙏 Acknowledgments
 
 - Inspired by George R.R. Martin's "A Song of Ice and Fire" series
