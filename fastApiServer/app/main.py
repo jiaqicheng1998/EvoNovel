@@ -1,15 +1,18 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from uuid import UUID
 from .model import ClickCount, GameSession, SessionDep, create_db_and_tables
 from .schemas import (
     StartGameResponse,
     ContinueGameRequest, ContinueGameResponse,
     GenerateArtRequest, GenerateArtResponse,
-    GenerateImageRequest, GenerateImageResponse
+    GenerateImageRequest, GenerateImageResponse,
+    GenerateVoiceRequest
 )
 from .ai_service import generate_initial_scene, generate_continuation, generate_art_description
 from .image_service import generate_image_with_cache, load_cache_metadata
+from .voice_service import generate_voice_stream
 from pathlib import Path
 
 
@@ -279,3 +282,16 @@ def generate_scene_image(request: GenerateImageRequest):
         return GenerateImageResponse(
             error=str(e)
         )
+
+@app.post("/api/game/generate-voice")
+def generate_voice(request: GenerateVoiceRequest):
+    """
+    Generates a voice audio stream for the given text.
+    """
+    try:
+        return StreamingResponse(
+            generate_voice_stream(request.text, request.voice_id),
+            media_type="audio/mpeg"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
