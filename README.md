@@ -23,12 +23,22 @@ A visual novel adventure game where you play as Ned Stark, transmigrated into hi
 
 ## 🚀 Features
 
-- **AI-Powered Story Generation**: Uses OpenAI GPT to create dynamic, branching narratives
+- **AI-Powered Story Generation**: Uses OpenAI GPT-4o-mini to create dynamic, branching narratives with low latency
+- **Intelligent Image Caching**: Semantic search system reuses images for similar scenes to boost performance
 - **AI-Generated Art**: Freepik API generates atmospheric scene images
 - **Interactive Visual Novel Interface**: Immersive full-screen experience
 - **Persistent Game Sessions**: Save your progress and continue your escape
 - **Character Tracking**: Monitor relationships with key Game of Thrones characters
 - **Risk Assessment**: Each choice has a risk level (low, medium, high)
+
+## 🧠 Intelligent Image Caching
+
+To improve performance and reduce costs, the game uses a smart semantic caching system for images:
+
+- **Semantic Search**: Uses OpenAI embeddings (`text-embedding-3-small`) to understand the *meaning* of a scene description, not just the exact text.
+- **Vector Similarity**: Calculates cosine similarity between the new scene and cached images.
+- **Automatic Reuse**: If a semantically similar image exists (similarity > 0.85), it's reused instantly (<1s) instead of generating a new one (20-30s).
+- **Smart Storage**: Images are stored locally in `image_cache/` with metadata in `cache_metadata.json`.
 
 ## 🛠️ Tech Stack
 
@@ -36,8 +46,9 @@ A visual novel adventure game where you play as Ned Stark, transmigrated into hi
 - **FastAPI**: Modern Python web framework
 - **PostgreSQL**: Database for game sessions and state
 - **SQLModel**: Database ORM
-- **OpenAI API**: Narrative and art description generation
+- **OpenAI API**: Narrative generation and text embeddings
 - **Freepik API**: Image generation
+- **NumPy**: Vector mathematics for semantic search
 
 ### Frontend
 - **React 19**: Modern React with TypeScript
@@ -53,7 +64,7 @@ A visual novel adventure game where you play as Ned Stark, transmigrated into hi
 - **Docker Desktop** (or Docker Engine + Docker Compose)
 - **Git**
 - **API Keys**:
-  - OpenAI API key (for narrative generation)
+  - OpenAI API key (for narrative and embeddings)
   - Freepik API key (for image generation)
 
 ## 🔧 Setup
@@ -122,11 +133,12 @@ This will:
 - `POST /api/game/start` - Start a new game session
 - `POST /api/game/continue` - Continue game with a choice
 - `POST /api/game/generate-art` - Generate art description for a scene
-- `POST /api/game/generate-image` - Generate image from art description
+- `POST /api/game/generate-image` - Generate image (with smart caching)
 
 ### Utility Endpoints
 
 - `GET /` - Health check
+- `GET /api/cache/status` - Check image cache statistics
 - `GET /clickcount` - Get click count (demo endpoint)
 - `GET /clickcount/increment` - Increment click count (demo endpoint)
 
@@ -138,6 +150,8 @@ Full API documentation available at http://localhost:8000/docs
 EvoNovel/
 ├── docker-compose.yml          # Orchestrates FastAPI, React, and PostgreSQL
 ├── .env                        # Environment variables (create this)
+├── image_cache/                # Stores cached game images (gitignored)
+├── cache_metadata.json         # Metadata for semantic cache (gitignored)
 ├── fastApiServer/
 │   ├── Dockerfile              # FastAPI container definition
 │   ├── requirements.txt        # Python dependencies
@@ -146,7 +160,7 @@ EvoNovel/
 │       ├── model.py            # Database models (SQLModel)
 │       ├── schemas.py          # Pydantic request/response models
 │       ├── ai_service.py       # OpenAI integration for narrative generation
-│       └── image_service.py    # Freepik API integration for images
+│       └── image_service.py    # Image generation + Semantic Caching logic
 └── reactClient/
     ├── Dockerfile              # React container definition
     ├── package.json            # Node dependencies
@@ -280,10 +294,6 @@ If PostgreSQL connection fails:
 - Ensure PostgreSQL container is running: `docker ps | grep postgres`
 - Check logs: `docker-compose logs postgres`
 - Restart: `docker-compose restart postgres`
-
-## 📝 License
-
-[Add your license here]
 
 ## 🙏 Acknowledgments
 
