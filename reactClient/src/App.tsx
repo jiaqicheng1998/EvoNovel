@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     const audio = new Audio('/music.mp3');
     audio.loop = true;
-    audio.volume = 0.4;
+    audio.volume = 0.1;
     
     const playAudio = async () => {
       try {
